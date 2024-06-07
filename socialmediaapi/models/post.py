@@ -7,3 +7,17 @@ class UserPostIn(BaseModel):
 
 class UserPost(UserPostIn):
     id: int
+
+
+class CommentInt(BaseModel):
+    body: str
+    post_id: int
+
+
+class Comment(CommentInt):
+    id: int
+
+
+class UserPostWithComments(BaseModel):
+    post: UserPost
+    comments: list[Comment]
