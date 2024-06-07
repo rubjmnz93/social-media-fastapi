@@ -23,7 +23,7 @@ async def root():
     return list(post_table.values())
 
 
-@router.post("/post", response_model=UserPost)
+@router.post("/post", response_model=UserPost, status_code=201)
 async def create_post(post: UserPostIn):
     data = post.model_dump()
     last_record_id = len(post_table)
@@ -32,7 +32,7 @@ async def create_post(post: UserPostIn):
     return new_post
 
 
-@router.post("/comment", response_model=Comment)
+@router.post("/comment", response_model=Comment, status_code=201)
 async def create_comment(comment: CommentInt):
     post = find_post(comment.post_id)
     if not post:
