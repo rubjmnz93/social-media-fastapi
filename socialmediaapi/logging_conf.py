@@ -1,7 +1,7 @@
 import logging
 from logging.config import dictConfig
 
-from socialmediaapi.config import DevConfig, config
+from socialmediaapi.config import DevConfig, ProdConfig, config
 
 
 def obfuscated(email: str, obfuscated_lenght: int) -> str:
@@ -19,6 +19,11 @@ class EmailObfuscationFilter(logging.Filter):
         if "email" in record.__dict__:
             record.email = obfuscated(record.email, self.obfuscated_length)
         return True
+
+
+handlers = ["default", "rotating_file"]
+if isinstance(config, ProdConfig):
+    handlers = ["default", "rotating_file", "logtail"]
 
 
 def configure_logging() -> None:
@@ -66,6 +71,13 @@ def configure_logging() -> None:
                     "encoding": "utf8",
                     "filters": ["correlation_id", "email_obfuscation"],
                 },
+                "logtail": {
+                    "class": "logtail.LogtailHandler",
+                    "level": "DEBUG",
+                    "formatter": "console",
+                    "filters": ["correlation_id", "email_obfuscation"],
+                    "source_token": config.LOGTAIL_API_KEY,
+                },
             },
             "loggers": {
                 "uvicorn": {
@@ -73,7 +85,7 @@ def configure_logging() -> None:
                     "level": "INFO",
                 },
                 "socialmediaapi": {
-                    "handlers": ["default", "rotating_file"],
+                    "handlers": handlers,
                     "level": "DEBUG" if isinstance(config, DevConfig) else "INFO",
                     "propagate": False,
                 },
