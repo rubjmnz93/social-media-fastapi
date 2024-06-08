@@ -5,7 +5,7 @@ from socialmediaapi.config import DevConfig, ProdConfig, config
 
 
 def obfuscated(email: str, obfuscated_lenght: int) -> str:
-    characters = email[:obfuscated]
+    characters = email[:obfuscated_lenght]
     first, last = email.split("@")
     return characters + ("*" * (len(first) - len(characters))) + "@" + last
 
