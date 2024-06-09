@@ -1,6 +1,7 @@
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 
 from socialmediaapi.database import comments_table, database, post_table
 from socialmediaapi.models.post import (
@@ -11,7 +12,7 @@ from socialmediaapi.models.post import (
     UserPostWithComments,
 )
 from socialmediaapi.models.users import User
-from socialmediaapi.security import get_current_user, oaut2_scheme
+from socialmediaapi.security import get_current_user
 from socialmediaapi.utils import log
 
 router = APIRouter()
@@ -37,9 +38,10 @@ async def get_all_posts():
 
 
 @router.post("/post", response_model=UserPost, status_code=201)
-async def create_post(post: UserPostIn, request: Request):
+async def create_post(
+    post: UserPostIn, current_user: Annotated[User, Depends(get_current_user)]
+):
     logger.info("Creating post")
-    current_user: User = await get_current_user(await oaut2_scheme(request))  # noqa
 
     data = post.model_dump()
     query = post_table.insert().values(data)
@@ -49,9 +51,10 @@ async def create_post(post: UserPostIn, request: Request):
 
 
 @router.post("/comment", response_model=Comment, status_code=201)
-async def create_comment(comment: CommentInt, request: Request):
+async def create_comment(
+    comment: CommentInt, current_user: Annotated[User, Depends(get_current_user)]
+):
     logger.debug("Creating a comment.")
-    current_user: User = await get_current_user(await oaut2_scheme(request))  # noqa
     post = await find_post(comment.post_id)
     if not post:
         raise HTTPException(
