@@ -43,7 +43,7 @@ async def create_post(
 ):
     logger.info("Creating post")
 
-    data = post.model_dump()
+    data = {**post.model_dump(), "user_id": current_user.id}
     query = post_table.insert().values(data)
     logger.debug(query)
     last_record_id = await database.execute(query)
@@ -61,7 +61,7 @@ async def create_comment(
             status_code=404, detail=f"Post with id {comment.post_id} not found"
         )
 
-    data = comment.model_dump()
+    data = {**comment.model_dump(), "user_id": current_user.id}
     query = comments_table.insert().values(data)
     logger.debug(query)
     last_record_id = await database.execute(query)
