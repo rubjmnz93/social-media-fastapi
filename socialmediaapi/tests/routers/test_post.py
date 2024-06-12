@@ -53,7 +53,7 @@ async def created_comment(
 
 @pytest.mark.anyio
 async def test_create_post(
-    async_client: AsyncClient, registered_user: dict, logged_in_token: str
+    async_client: AsyncClient, confirmed_user: dict, logged_in_token: str
 ):
     body = "Test Post"
     response = await async_client.post(
@@ -66,7 +66,7 @@ async def test_create_post(
     assert {
         "id": 1,
         "body": body,
-        "user_id": registered_user["id"],
+        "user_id": confirmed_user["id"],
     }.items() <= response.json().items()
 
 
@@ -83,10 +83,10 @@ async def test_create_post_missing_data(
 
 @pytest.mark.anyio
 async def test_create_post_expired_token(
-    async_client: AsyncClient, registered_user: str, mocker
+    async_client: AsyncClient, confirmed_user: str, mocker
 ):
     mocker.patch("socialmediaapi.security.access_token_expire_minutes", return_value=-1)
-    token = security.create_access_token(registered_user["email"])
+    token = security.create_access_token(confirmed_user["email"])
     response = await async_client.post(
         "/post",
         json={"body": "Test post"},
@@ -150,7 +150,7 @@ async def test_get_all_posts_sort_likes(
 async def test_create_comment(
     async_client: AsyncClient,
     created_post: dict,
-    registered_user: dict,
+    confirmed_user: dict,
     logged_in_token: str,
 ):
     body = "Test Comment"
@@ -165,7 +165,7 @@ async def test_create_comment(
         "id": 1,
         "body": body,
         "post_id": created_post["id"],
-        "user_id": registered_user["id"],
+        "user_id": confirmed_user["id"],
     }.items() <= response.json().items()
 
 
@@ -247,7 +247,7 @@ async def test_get_missing_post_with_comments(
 async def test_like_post(
     async_client: AsyncClient,
     created_post: dict,
-    registered_user: dict,
+    confirmed_user: dict,
     logged_in_token: str,
 ):
     response = await async_client.post(
@@ -259,5 +259,5 @@ async def test_like_post(
     assert {
         "id": 1,
         "post_id": created_post["id"],
-        "user_id": registered_user["id"],
+        "user_id": confirmed_user["id"],
     }.items() <= response.json().items()
