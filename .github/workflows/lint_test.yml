@@ -27,9 +27,4 @@ jobs:
         ruff check --output-format=github socialmediaapi
     - name: Test with pytest
       run: |
-        pytest socialmediaapi/tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=socialmediaapi --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
-    - name: Pytest coverage comment
-      uses: MishaKav/pytest-coverage-comment@main
-      with:
-        pytest-coverage-path: ./pytest-coverage.txt
-        junitxml-path: junit/test-results.xml
+        pytest socialmediaapi/tests/ --cov=socialmediaapi
