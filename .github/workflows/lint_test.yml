@@ -8,7 +8,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
+  lint_test_and_coverage:
     runs-on: ubuntu-latest
 
     steps:
