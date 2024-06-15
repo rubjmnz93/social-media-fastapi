@@ -75,7 +75,9 @@ async def test_create_post_missing_data(
     async_client: AsyncClient, logged_in_token: str
 ):
     response = await async_client.post(
-        "/post", json={}, headers={"Authorization": f"Bearer {logged_in_token}"}
+        "/post",
+        json={},
+        headers={"Authorization": f"Bearer {logged_in_token}"},
     )
 
     assert response.status_code == 422
@@ -225,7 +227,7 @@ async def test_get_post_with_comments_and_like(
 ):
     await like_post(created_post["id"], async_client, logged_in_token)
 
-    response = await async_client.get(f"/post/{created_post["id"]}")
+    response = await async_client.get(f"/post/{created_post['id']}")
 
     assert response.status_code == 200
     assert response.json() == {

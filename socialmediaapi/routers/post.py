@@ -5,7 +5,12 @@ from typing import Annotated
 import sqlalchemy
 from fastapi import APIRouter, Depends, HTTPException
 
-from socialmediaapi.database import comments_table, database, likes_table, post_table
+from socialmediaapi.database import (
+    comments_table,
+    database,
+    likes_table,
+    post_table,
+)
 from socialmediaapi.models.post import (
     Comment,
     CommentInt,
@@ -77,7 +82,8 @@ async def create_post(
 
 @router.post("/comment", response_model=Comment, status_code=201)
 async def create_comment(
-    comment: CommentInt, current_user: Annotated[User, Depends(get_current_user)]
+    comment: CommentInt,
+    current_user: Annotated[User, Depends(get_current_user)],
 ):
     logger.debug("Creating a comment.")
     post = await find_post(comment.post_id)
