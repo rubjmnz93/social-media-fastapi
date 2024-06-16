@@ -59,5 +59,12 @@ async def confirmed_user(async_client: AsyncClient, registered_user: dict) -> di
 
 @pytest.fixture
 async def logged_in_token(async_client: AsyncClient, confirmed_user: dict):
-    response = await async_client.post("/token", json=confirmed_user)
+    response = await async_client.post(
+        "/token",
+        data={
+            "username": confirmed_user["email"],
+            "password": confirmed_user["password"],
+        },
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
     return response.json()["access_token"]
