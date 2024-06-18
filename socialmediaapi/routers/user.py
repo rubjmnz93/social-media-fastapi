@@ -1,7 +1,7 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from socialmediaapi import tasks
@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.post("/register", status_code=201)
-async def register(user: UserIn, request: Request):
+async def register(user: UserIn, background_task: BackgroundTasks, request: Request):
     if await get_user(user.email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -35,7 +35,8 @@ async def register(user: UserIn, request: Request):
     )
     logger.debug(query)
     await database.execute(query)
-    await tasks.send_user_registration_email(
+    background_task.add_task(
+        tasks.send_user_registration_email,
         user.email,
         confirmation_url=request.url_for(
             "confirm_email", token=create_confirmation_token(user.email)
