@@ -15,7 +15,6 @@ This project is a REST API for a social media application built with **FastAPI**
 
 - **FastAPI**
 - **SQLAlchemy**
-- **Alembic** (migrations)
 - **JWT** (authentication)
 - **Pydantic**
 - **Pytest** (testing)
@@ -35,13 +34,7 @@ cd social-media-fastapi
 pip install -r requirements.txt
 ```
 
-3. Initialize the database:
-
-```bash
-alembic upgrade head
-```
-
-4. Run the server:
+3. Run the server:
 
 ```bash
 uvicorn app.main:app --reload
